@@ -177,26 +177,31 @@
 			// Text selection position might get mangled by
 			// subsequent dom modification, save it now for restoring. (#8617)
 			if ( keepSelection !== false ) {
-				var sel = editable.getDocument().getSelection().getNative(),
+				var sel = editable.getDocument().getSelection().getNative();
+				if ( sel == '' ) {
+					return;
+				} else {
 					// Be error proof.
-					range = sel && sel.type != 'None' && sel.getRangeAt( 0 ),
-					fillingCharSeqLength = fillingCharSequence.length;
+					var range = sel && sel.type != 'None' && sel.getRangeAt( 0 ),
+						fillingCharSeqLength = fillingCharSequence.length;
 
-				// If there's some text other than the sequence in the FC text node and the range
-				// intersects with that node...
-				if ( fillingChar.getLength() > fillingCharSeqLength && range && range.intersectsNode( fillingChar.$ ) ) {
-					var bm = createNativeSelectionBookmark( sel );
+					// If there's some text other than the sequence in the FC text node and the range
+					// intersects with that node...
+					if ( fillingChar.getLength() > fillingCharSeqLength && range && range.intersectsNode( fillingChar.$ ) ) {
+						var bm = createNativeSelectionBookmark( sel );
 
-					// Correct start offset anticipating the removal of FC.
-					if ( sel.anchorNode == fillingChar.$ && sel.anchorOffset > fillingCharSeqLength ) {
-						bm[ 0 ].offset -= fillingCharSeqLength;
-					}
+						// Correct start offset anticipating the removal of FC.
+						if ( sel.anchorNode == fillingChar.$ && sel.anchorOffset > fillingCharSeqLength ) {
+							bm[ 0 ].offset -= fillingCharSeqLength;
+						}
 
-					// Correct end offset anticipating the removal of FC.
-					if ( sel.focusNode == fillingChar.$ && sel.focusOffset > fillingCharSeqLength ) {
-						bm[ 1 ].offset -= fillingCharSeqLength;
+						// Correct end offset anticipating the removal of FC.
+						if ( sel.focusNode == fillingChar.$ && sel.focusOffset > fillingCharSeqLength ) {
+							bm[ 1 ].offset -= fillingCharSeqLength;
+						}
 					}
 				}
+				
 			}
 
 			// We can't simply remove the filling node because the user
