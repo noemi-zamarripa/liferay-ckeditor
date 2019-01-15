@@ -1914,7 +1914,7 @@
 
 					var nativeRange = this.document.$.createRange();
 
-					if ( range.collapsed && rangeRequiresFix( range ) ) {
+					if ( range.collapsed && CKEDITOR.env.webkit && rangeRequiresFix( range ) ) {
 						// Append a zero-width space so WebKit will not try to
 						// move the selection by itself (#1272).
 						var fillingChar = createFillingCharSequenceNode( this.root );
@@ -1934,6 +1934,20 @@
 					}
 
 					nativeRange.setStart( range.startContainer.$, range.startOffset );
+
+					/*try {
+						nativeRange.setStart( range.startContainer.$, range.startOffset );
+					} catch ( e ) {
+						// There is a bug in Firefox implementation (it would be too easy
+						// otherwise). The new start can't be after the end (W3C says it can).
+						// So, let's create a new range and collapse it to the desired point.
+						if ( e.toString().indexOf( 'NS_ERROR_DOM_INDEX_SIZE_ERR' ) >= 0 ) {
+							range.collapse( 1 );
+							nativeRange.setStart( range.startContainer.$, range.startOffset );
+						} else {
+							throw e;
+						}
+					}*/
 
 					try {
 						nativeRange.setEnd( range.endContainer.$, range.endOffset );
