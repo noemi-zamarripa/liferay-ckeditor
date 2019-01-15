@@ -182,7 +182,7 @@
 					return;
 				}
 
-				var range = sel && sel.type != 'None' && sel.getRangeAt( 0 ),
+				var range = sel && sel.type != 'None' && sel.isCollapsed,
 					fillingCharSeqLength = fillingCharSequence.length;
 
 				// If there's some text other than the sequence in the FC text node and the range
